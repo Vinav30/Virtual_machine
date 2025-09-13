@@ -17,9 +17,9 @@ stages:
       displayName: 'Terraform Init'
       inputs:
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev'
+        workingDirectory: 'C:\Windows\System32\agent\_work\2\s\todoapp_infra'
         backendType: 'azurerm'
-        backendServiceArm: 'Vinav'   # Service connection name
+        backendServiceArm: 'Vinav'
         backendAzureRmResourceGroupName: 'backend-rg'
         backendAzureRmStorageAccountName: 'backendstgstg'
         backendAzureRmContainerName: 'vinav'
@@ -30,23 +30,14 @@ stages:
       displayName: 'Terraform Plan'
       inputs:
         command: 'plan'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev'
-        commandOptions: '-out=$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev/tfplan'
+        workingDirectory: 'C:\Windows\System32\agent\_work\2\s\todoapp_infra'
         allowTelemetryCollection: false
 
     - task: TerraformCLI@2
       displayName: 'Terraform Apply'
       inputs:
         command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev'
-        commandOptions: '-auto-approve $(System.DefaultWorkingDirectory)/virtual_machine/environments/dev/tfplan'
+        workingDirectory: 'C:\Windows\System32\agent\_work\2\s\todoapp_infra'
         allowTelemetryCollection: false
 
-    - task: TerraformCLI@2
     
-      displayName: 'Terraform destroy'
-      inputs:
-        command: 'destroy'
-        workingDirectory: 'C:\Windows\System32\agent\_work\1\s\virtual_machine\environments\dev'
-        environmentServiceName: 'Vinav'
-        allowTelemetryCollection: true
