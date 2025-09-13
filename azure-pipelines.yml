@@ -1,2 +1,52 @@
-# Starter pipeline
+trigger:
+- feature/main
+pool:
+  name: Vinav_Pool  # apna agent pool ka naam
 
+stages:
+- stage: Terraform
+  jobs:
+  - job: TerraformJob
+    steps:
+    - task: TerraformInstaller@2
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: TerraformCLI@2
+      displayName: 'Terraform Init'
+      inputs:
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev'
+        backendType: 'azurerm'
+        backendServiceArm: 'Vinav'   # Service connection name
+        backendAzureRmResourceGroupName: 'backend-rg'
+        backendAzureRmStorageAccountName: 'backendstgstg'
+        backendAzureRmContainerName: 'vinav'
+        backendAzureRmKey: 'vinav'
+        allowTelemetryCollection: true
+
+    - task: TerraformCLI@2
+      displayName: 'Terraform Plan'
+      inputs:
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev'
+        commandOptions: '-out=$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev/tfplan'
+        allowTelemetryCollection: false
+
+    - task: TerraformCLI@2
+      displayName: 'Terraform Apply'
+      inputs:
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/virtual_machine/environments/dev'
+        commandOptions: '-auto-approve $(System.DefaultWorkingDirectory)/virtual_machine/environments/dev/tfplan'
+        allowTelemetryCollection: false
+
+    - task: TerraformCLI@2
+    
+      displayName: 'Terraform destroy'
+      inputs:
+        command: 'destroy'
+        workingDirectory: 'C:\Windows\System32\agent\_work\1\s\virtual_machine\environments\dev'
+        environmentServiceName: 'Vinav'
+        allowTelemetryCollection: true
